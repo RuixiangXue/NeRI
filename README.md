@@ -37,13 +37,9 @@ python train.py -e 600 --outf tp --stem_dim_num 64_1 --fc_hw_dim 4_125_26  --sin
 ```bash
 python train.py -e 600 --outf tp --stem_dim_num 64_1 --fc_hw_dim 4_125_26  --single_res --act swish --eval_freq=1 --temporal_embed='1.25_20' --translation_embed='1.25_30' --rotation_embed='1.25_30'   --segmentation --cfg='config/kitti_00.yaml' --strides 2 2 2 2 --eval_only --quant_mode='pw-1' --quant_bit=16
 ```
-## Introduction
+The bpp (bits per point) can be calculated by:
 
-This project aims to demonstrate the use of a mathematical formula. The formula for calculating the area of a circle is given by:
+```math
+  Bpp = ModelSize \times QuantizationPrecision \times EntropyEfficiency / TotalNumPoints
+```
 
-\[ A = \pi r^2 \]
-
-where:
-- \( A \) is the area of the circle,
-- \( \pi \) is the mathematical constant Pi (approximately 3.14159), and
-- \( r \) is the radius of the circle.
