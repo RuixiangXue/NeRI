@@ -1,0 +1,22 @@
+##Data
+DATA:
+  DATASET: 'KITTI'
+  DIR: "../dataset/KITTI/sequences"
+  LiDAR_CFG_YAML: "dataset/lidar_cfg/Velodyne_HDL_64E.yaml"
+  CHANNEL_DISTRIBUTE_CSV: None
+  SEQ: 0
+  START_IDX: 0  
+  NUMBER_FRAMES: 4541
+  FRAME_GAP: 1
+  # Normalization for data augumentation
+  AUG_NORMALIZATION: False
+  MEANS: 
+  STD:
+  # Normalize range from [0,max] to [0,1]
+  NORMALIZATION: True # True to conduct Normalization; False to test max_range
+  MAX_RANGE: 80.5243 
+  V_Res: 64
+  H_Res: 2000
+
+
+
