@@ -43,7 +43,7 @@ The bpp (bits per point) can be calculated by:
   Bpp = ModelSize \times QuantizationPrecision \times EntropyEfficiency / TotalNumPoints
 ```
 
-##
+## Contact
 If you have any questions, concerns, or would like to contribute to this project, feel free to reach out. You can contact us at：
 - **Email:** chentong@nju.edu.cn
 
