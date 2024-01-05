@@ -6,7 +6,9 @@ Official Implementation of "NERI: IMPLICIT NEURAL REPRESENTATION OF LIDAR POINT 
 
 ## Data Preparation
 
-
+- `data/raw/`: 存储原始数据的目录。
+  - `images/`: 存储原始图像文件。
+  - `annotations/`: 存储与图像相关的标注文件，如 XML 或 JSON
 
 ## Get Started
 
