@@ -3,6 +3,9 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Official Implementation of "NERI: IMPLICIT NEURAL REPRESENTATION OF LIDAR POINT CLOUD USING RANGE IMAGE SEQUENCE"
+
+![Local Image](/fig/Framework.png)
+
 ## Get Started
 ### Data Preparation
 The dataset used in this work can be downloaded from [KITTI](https://www.cvlibs.net/datasets/kitti/index.php).
