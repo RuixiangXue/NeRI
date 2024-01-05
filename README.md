@@ -5,11 +5,17 @@
 Official Implementation of "NERI: IMPLICIT NEURAL REPRESENTATION OF LIDAR POINT CLOUD USING RANGE IMAGE SEQUENCE"
 
 ## Data Preparation
-The dataset used in this work can be downloaded from [KITTI](https://www.cvlibs.net/datasets/kitti/index.php)
-- `data/raw/`: 存储原始数据的目录。
-  - `images/`: 存储原始图像文件。
-  - `annotations/`: 存储与图像相关的标注文件，如 XML 或 JSON
-
+The dataset used in this work can be downloaded from [KITTI](https://www.cvlibs.net/datasets/kitti/index.php).
+It should be organized as follows:
+- `sequence/00/`
+  - `velodyne/`
+    - `000000.bin`
+    - `000001.bin`
+    - `000002.bin`
+    - `......`
+  - `calib.txt`
+  - `pose.txt`
+- `......`
 ## Get Started
 
 ### Dependencies
