@@ -11,7 +11,10 @@ Official Implementation of "NERI: IMPLICIT NEURAL REPRESENTATION OF LIDAR POINT 
 ## Get Started
 
 ### Dependencies
+
 ```bash
+conda create -n neri
+conda activate neri
 pip install -r requirements.txt 
 ```
 
