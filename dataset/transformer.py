@@ -5,8 +5,6 @@ import yaml
 import math
 import csv
 import os
-from dataset.ops.cpp_modules import dataset_utils_cpp
-
 
 class PCTransformer:
     def __init__(self, lidar_cfg=None, channel_distribute_csv=None):
@@ -59,35 +57,31 @@ class PCTransformer:
         return np.arctan2(points[:, 1], points[:, 0]) % (2 * np.pi)
 
     def point_cloud_to_range_image(self, point_cloud):
+
+        # python version
+        range_image = np.zeros((self.H, self.W), dtype=np.float32)
+        
+        # horizontal index h
+        horizontal_angle = self.calculate_horizon_angle(point_cloud)
+        col = np.rint(horizontal_angle / self.horizontal_FOV * self.W)
+        col = col % self.W
+
+        # vertical index w
+        vertical_angle = self.calculate_vertical_angle(point_cloud)
         if self.even_dist:
-            range_image = dataset_utils_cpp.point_cloud_to_range_image_even(point_cloud.astype(np.float32), self.H, self.W,
-                                                                            self.horizontal_FOV, self.vertical_max,
-                                                                            self.vertical_min)  # 0.006s
+            vertical_resolution = (self.vertical_max - self.vertical_min) / (self.H - 1)
+            row = np.rint((vertical_angle - self.vertical_min) / vertical_resolution)
         else:
-            # python version
-            range_image = np.zeros((self.H, self.W), dtype=np.float32)
-            
-            # horizontal index h
-            horizontal_angle = self.calculate_horizon_angle(point_cloud)
-            col = np.rint(horizontal_angle / self.horizontal_FOV * self.W)
-            col = col % self.W
+            vertical_angle_dif = np.expand_dims(self.vertical_angle, 0) - np.expand_dims(vertical_angle, 1)
+            row = np.argmin(np.abs(vertical_angle_dif), -1)
+        # print('row min: ', row.min(), ' row max: ', row.max())
+        # print(np.bincount(row.astype(np.int32)))
+        row[np.where(row >= self.H)] = self.H - 1
+        row[np.where(row < 0)] = 0
 
-            # vertical index w
-            vertical_angle = self.calculate_vertical_angle(point_cloud)
-            if self.even_dist:
-                vertical_resolution = (self.vertical_max - self.vertical_min) / (self.H - 1)
-                row = np.rint((vertical_angle - self.vertical_min) / vertical_resolution)
-            else:
-                vertical_angle_dif = np.expand_dims(self.vertical_angle, 0) - np.expand_dims(vertical_angle, 1)
-                row = np.argmin(np.abs(vertical_angle_dif), -1)
-            # print('row min: ', row.min(), ' row max: ', row.max())
-            # print(np.bincount(row.astype(np.int32)))
-            row[np.where(row >= self.H)] = self.H - 1
-            row[np.where(row < 0)] = 0
-
-            # depth
-            depth = np.linalg.norm(point_cloud[:, :3], 2, -1)
-            range_image[row.astype(np.int32), col.astype(np.int32)] = depth
+        # depth
+        depth = np.linalg.norm(point_cloud[:, :3], 2, -1)
+        range_image[row.astype(np.int32), col.astype(np.int32)] = depth
         return range_image
 
     def range_image_to_point_cloud(self, range_image):
