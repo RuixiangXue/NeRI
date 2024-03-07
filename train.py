@@ -61,6 +61,7 @@ def main():
     parser.add_argument('--quant_axis', type=int, default=0, help='quantization axis (-1 means per tensor)')
     parser.add_argument('--eval_fps', action='store_true', default=False, help='fwd multiple times to test the fps ')
     parser.add_argument('--dump', action='store_true', default=False, help='dump the prediction images')
+    parser.add_argument('--segmentation', action='store_true', default=False, help='segmentation or not')
     # pruning paramaters
     parser.add_argument('--prune_steps', type=float, nargs='+', default=[0.,], help='prune steps')
     parser.add_argument('--prune_ratio', type=float, default=1.0, help='pruning ratio')
@@ -271,7 +272,7 @@ def train(local_rank, args):
             print_str += f'Model sparsity at Epoch{args.start_epoch}: {sparisity_num / 1e6 / total_params}\n'
 
         # import pdb; pdb.set_trace; from IPython import embed; embed()
-        val_psnr= evaluate(model, val_dataloader, PE, local_rank, args) #, val_msssim 
+        val_psnr= evaluate(model, val_dataloader, Temporal_PE,Rotation_PE,Translation_PE, local_rank, args) #, val_msssim 
         print_str += f'PSNR on validate set for bit {args.quant_bit} with axis {args.quant_axis}: {round(val_psnr.item(),2)}'
         print(print_str)
         with open('{}/eval.txt'.format(args.outf), 'a') as f:
@@ -496,11 +497,14 @@ def evaluate(model, val_dataloader, Temporal_PE,Rotation_PE,Translation_PE, loca
             write_ri(seg_ri_filename, pc_seg)
         
         output_pc_rec = range2pc(output_list[0].squeeze(0),args.cfg) #(64,2000,3)
+        if args.segmentation:
+            pc_seg = (pc_seg.permute(1,2,0)).numpy() 
+            output_pc_rec = (output_pc_rec * pc_seg).reshape(-1,3) # (64*2000, 3)
+            output_pc_rec = np.unique(output_pc_rec,axis=0)
 
-        pc_seg = (pc_seg.permute(1,2,0)).numpy() 
-        output_pc_rec = (output_pc_rec * pc_seg).reshape(-1,3) # (64*2000, 3)
-        output_pc_rec = np.unique(output_pc_rec,axis=0)
-
+        else:
+            output_pc_rec = output_pc_rec.reshape(-1,3) # (64*2000, 3)
+            output_pc_rec = np.unique(output_pc_rec,axis=0)
         pc = pc.reshape(-1,3).numpy()
         pc = np.unique(pc,axis=0)
         
